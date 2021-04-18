@@ -10,6 +10,12 @@
 <body>
     <div class="container">
         <h1>Hello Express JS </h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/admin">Admin</a>
+            <a href="/user">User</a>
+            <a href="/product">Product</a>
+        </nav>
         <fieldset>
             <legend>Search Form</legend>
         <form method="GET" role="search" action="/search">
@@ -19,9 +25,9 @@
         </fieldset>
         <fieldset>
             <legend>Login Form</legend>
-        <form method="POST" action="/contact" >
+        <form method="POST" action="/contact">
             <label>Username: <input type="text" name="name" required></label>
-            <label>Password: <input type="password" name="pass" required></label>
+            <label>Password: <input type="text" name="pass" required></label>
             <button>Send</button>
         </form>
         </fieldset>
