@@ -1,6 +1,9 @@
 const express=require('express');
 const dotenv=require("dotenv").config();
 const bodyParser=require('body-parser');
+const cookieParser=require('cookie-parser');
+const session=require('express-session');
+const parseurl=require('parseurl');
 
 //const admin=require('./admin');
 //const user=require('./user');
@@ -9,20 +12,74 @@ const [admin,user,product]=[require('./admin'), require('./user'),require('./pro
 const app=express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false })); 
+app.use(cookieParser());
 
+// trust first proxy
+app.set('trust proxy', 1); 
+app.use(session({
+    secret:"session",
+    resave:false,
+    saveUninitialized:true,
+    cookie:{secure:false}
+}))
 
-app.use(express.static('src/public'));
+//app.use(express.static('src/public'));
 
 // app.use((req,res,next)=>{
 //     console.log('Time: %d', Date.now());
 //     next();
 // });
 
+
+app.use( (req, res, next)=> {
+    if (!req.session.views) {
+      req.session.views = {}
+    }
+  
+    // get the url pathname
+    var pathname = parseurl(req).pathname
+  
+    // count the views
+    req.session.views[pathname] = (req.session.views[pathname] || 0) + 1
+  
+    next()
+  })
+
 app.get("/",(req,res)=>{
     res.setHeader("Content-Type","text/html");
-    res.status(200).send("<h1>Hello Express JS</h1>");
+    //res.status(200).send( req.cookies);
+    //res.status(200).send( req.sessionID);
+    if( req.session.username){
+        console.log(req.session.username);    
+    }
+    else{
+        req.session.username="avi";
+    }
+    
+    res.send('Id :'+ req.sessionID+' Session Views :  '+ req.session.views['/'] + ' times');
 });
 
+app.get("/logout",(req,res)=>{
+    req.session.destroy();
+    res.send("logout");
+})
+
+app.get("/setcookie",(req,res)=>{
+    res.setHeader("Content-Type","text/html");
+    res.cookie('id','212',{httpOnly: true});
+    res.status(200).send("cookie saved");
+});
+
+app.get('/getcookie',(req,res)=>{
+    const id=req.cookies.id;
+    res.setHeader("Content-Type","text/html");
+    if( id ){
+        res.status(200).send(id);
+    }
+    else{
+        res.status(200).send("No cookie found");
+    }
+});
 
 app.get("/courses/:type/:name",(req,res)=>{
     res.status(200).send(req.params);
@@ -46,7 +103,6 @@ app.post("/contact",(req,res)=>{
     else{
        // res.redirect()
         res.status(200).send('Invalid userid or password, <a href="/">Login</a>');
-
     }
 
 });
