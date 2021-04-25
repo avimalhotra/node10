@@ -11,6 +11,7 @@ const [admin,user,product]=[require('./admin'), require('./user'),require('./pro
 
 const app=express();
 app.use(bodyParser.json());
+app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: false })); 
 app.use(cookieParser());
 
@@ -23,7 +24,7 @@ app.use(session({
     cookie:{secure:false}
 }))
 
-//app.use(express.static('src/public'));
+app.use(express.static('src/public'));
 
 // app.use((req,res,next)=>{
 //     console.log('Time: %d', Date.now());
@@ -49,14 +50,45 @@ app.get("/",(req,res)=>{
     res.setHeader("Content-Type","text/html");
     //res.status(200).send( req.cookies);
     //res.status(200).send( req.sessionID);
-    if( req.session.username){
-        console.log(req.session.username);    
+        //req.session.username="avi";    
+       
+    res.send('Id :'+ req.sessionID+' Session Views :  '+ req.session.views['/'] + ' times');
+});
+
+app.post('/search',(req,res)=>{
+    var days=["sun","mon","tues","wed","thurs","fri","sat"];
+    var data=req.body;
+    var no=data.split(":")[1];
+
+   // res.header('Access-Control-Allow-Origin',"*");
+    
+    if( no<days.length){
+
+        return res.send(days[no]);
     }
     else{
-        req.session.username="avi";
+        return res.send("invalid day");
     }
+
+});
+
+app.get("/api",(req,res)=>{
+    var data=["sun","mon","tues","wed","thurs","fri","sat"];
+    res.header('Access-Control-Allow-Origin',"*");
+    return res.send(data);
+});
+app.get("/api/:no",(req,res)=>{
+    var data=["sun","mon","tues","wed","thurs","fri","sat"];
+    var dayno=req.params.no;
     
-    res.send('Id :'+ req.sessionID+' Session Views :  '+ req.session.views['/'] + ' times');
+    
+    if( dayno<data.length){
+
+        return res.send(data[dayno]);
+    }
+    else{
+        return res.send("invalid day");
+    }
 });
 
 app.get("/logout",(req,res)=>{

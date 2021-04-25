@@ -31,6 +31,47 @@
             <button>Send</button>
         </form>
         </fieldset>
+
+        <hr>
+        <form>
+            <label>Day: <input type="number" min="0" max="6" required></label> <span class="data"></span>
+        </form>
     </div>
+    <script>
+        
+var xhr=new XMLHttpRequest();
+
+xhr.open("get","http://127.0.0.1:3000/api");
+xhr.send();
+
+xhr.onload=function(){
+        if( this.readyState==4 && this.status==200){
+            console.log(this.responseText)
+        }
+        else{
+            console.log("error");
+        }
+};
+
+document.querySelector('input[type="number"]').addEventListener("input",function(){
+    var no=this.value;
+    var xhr=new XMLHttpRequest();
+
+xhr.open("post","http://127.0.0.1:3000/search");
+xhr.send("name:"+no);
+
+xhr.onload=function(){
+        if( this.readyState==4 && this.status==200){
+            document.querySelector(".data").innerHTML=this.responseText
+        }
+        else{
+            document.querySelector(".data").innerHTML=("error");
+        }
+};
+   
+});
+
+
+</script>  
 </body>
 </html>
