@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node JS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        {% include "header.html" %}
+    
+       {% include "nav.html" %}
+       <main>
+        <fieldset>
+            <legend>Search Form</legend>
+        <form method="GET" role="search" action="/search">
+            <label><input type="search" name="q" required></label>
+            <button>Search</button>
+        </form>
+        </fieldset>
+        <fieldset>
+            <legend>Login Form</legend>
+        <form method="POST" action="/contact">
+            <label>Username: <input type="text" name="name" required value="admin"></label>
+            <label>Password: <input type="password" name="pass" required value="123456"></label>
+            <button>Send</button>
+        </form>
+        </fieldset>
+
+        <hr>
+        <form>
+            <label>Day: <input type="number" min="0" max="6" required></label> <span class="data"></span>
+        </form>
+        </main>
+        {% include "footer.html" %}
+    </div>
+    <script>
+        
+var xhr=new XMLHttpRequest();
+
+xhr.open("get","http://127.0.0.1:3000/api");
+xhr.send();
+
+xhr.onload=function(){
+        if( this.readyState==4 && this.status==200){
+           // console.log(this.responseText)
+        }
+        else{
+            //console.log("error");
+        }
+};
+
+document.querySelector('input[type="number"]').addEventListener("input",function(){
+    var no=this.value;
+    var xhr=new XMLHttpRequest();
+
+xhr.open("post","http://127.0.0.1:3000/search");
+xhr.send("name:"+no);
+
+xhr.onload=function(){
+        if( this.readyState==4 && this.status==200){
+            document.querySelector(".data").innerHTML=this.responseText
+        }
+        else{
+            document.querySelector(".data").innerHTML=("error");
+        }
+};
+   
+});
+
+
+</script>  
+</body>
+</html>

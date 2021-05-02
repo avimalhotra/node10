@@ -4,16 +4,26 @@ const bodyParser=require('body-parser');
 const cookieParser=require('cookie-parser');
 const session=require('express-session');
 const parseurl=require('parseurl');
+const nunjucks=require('nunjucks');
+const path=require('path');
+const { title } = require('process');
 
-//const admin=require('./admin');
-//const user=require('./user');
-const [admin,user,product]=[require('./admin'), require('./user'),require('./product')];
+
+const [admin,user,product]=[require('./routes/admin'), require('./routes/user'),require('./routes/product')];
 
 const app=express();
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: false })); 
 app.use(cookieParser());
+
+//nunjucks.configure('views', { autoescape: true });
+nunjucks.configure(path.resolve(__dirname,'public'),{
+    express:app,
+    autoscape:true,
+    noCache:false,
+    watch:true
+}); 
 
 // trust first proxy
 app.set('trust proxy', 1); 
@@ -44,7 +54,7 @@ app.use( (req, res, next)=> {
     req.session.views[pathname] = (req.session.views[pathname] || 0) + 1
   
     next()
-  })
+  });
 
 app.get("/",(req,res)=>{
     res.setHeader("Content-Type","text/html");
@@ -52,7 +62,8 @@ app.get("/",(req,res)=>{
     //res.status(200).send( req.sessionID);
         //req.session.username="avi";    
        
-    res.send('Id :'+ req.sessionID+' Session Views :  '+ req.session.views['/'] + ' times');
+    //res.send('Id :'+ req.sessionID+' Session Views :  '+ req.session.views['/'] + ' times');
+    res.render('home.html',{name:"Homepage", data:{version:'3.2.3',licence:'mozilla' },});
 });
 
 app.post('/search',(req,res)=>{
@@ -60,10 +71,9 @@ app.post('/search',(req,res)=>{
     var data=req.body;
     var no=data.split(":")[1];
 
-   // res.header('Access-Control-Allow-Origin',"*");
+    res.header('Access-Control-Allow-Origin',"*");
     
     if( no<days.length){
-
         return res.send(days[no]);
     }
     else{
@@ -80,7 +90,7 @@ app.get("/api",(req,res)=>{
 app.get("/api/:no",(req,res)=>{
     var data=["sun","mon","tues","wed","thurs","fri","sat"];
     var dayno=req.params.no;
-    
+
     
     if( dayno<data.length){
 
@@ -129,11 +139,12 @@ app.post("/contact",(req,res)=>{
     //res.status(200).send(req.query);
     //res.status(200).json(req.query);
 
-    if( req.body.name="admin" && req.body.pass=="123456"){
+    if( req.body.name=="admin" && req.body.pass=="123456"){
+
         res.status(200).send(req.body);
     }
     else{
-       // res.redirect()
+       
         res.status(200).send('Invalid userid or password, <a href="/">Login</a>');
     }
 
