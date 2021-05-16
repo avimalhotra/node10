@@ -157,6 +157,13 @@ app.use('/product',product);
 
 
 
+require('./mdb');
+
+
+
+
+
+
 /*Wildcard Handler*/
 app.get("/**",(req,res)=>{
     res.status(404);
