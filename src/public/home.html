@@ -33,6 +33,25 @@
         <form>
             <label>Day: <input type="number" min="0" max="6" required></label> <span class="data"></span>
         </form>
+        <br>
+        <hr>
+        <br>
+    <h2>Store Car data</h2>
+        <form action="/savedata" method="GET">
+            <div><label>Name: <input type="text" required name="name"></label></div> <br>
+            <div><label>Brand: <input type="text" required name="brand"></label></div> <br>
+            <div><label>Type: <input type="text" required name="type"></label></div> <br>
+            <div><label>Price: <input type="text" required name="price"></label></div> <br>
+            <div><button type="submit">Send</button> <button type="reset">Reset</button></div>
+        </form>
+
+        <h2>Search Cars</h2>
+
+        <form action="/searchcar" method="GET">
+            <label>Name: <input type="search" name="name" required></label>
+            <button type="submit">Search</button>
+        </form>
+
         </main>
         {% include "footer.html" %}
     </div>

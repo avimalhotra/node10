@@ -8,6 +8,9 @@ const nunjucks=require('nunjucks');
 const path=require('path');
 const { title } = require('process');
 
+const db=require('./dao');
+const [Car]=[require('./models/cars')];
+
 
 const [admin,user,product]=[require('./routes/admin'), require('./routes/user'),require('./routes/product')];
 
@@ -81,6 +84,47 @@ app.post('/search',(req,res)=>{
     }
 
 });
+
+
+app.get('/savedata',(req,res)=>{
+
+    let car=new Car({name:req.query.name, brand:req.query.brand, type:req.query.type, price:req.query.price });
+
+    car.save((err,data)=>{
+        if( err){
+            
+            res.status(200).send("Error");
+        }
+        else{
+            
+            res.status(200).send("Data Saved");
+        }
+
+    });
+   
+});
+
+app.get("/searchcar",(req,res)=>{
+    
+    //res.send(req.query);
+
+    Car.find({name:req.query.name},(err,data)=>{
+        if(err){
+            res.send(`Error: ${err}`);
+        }
+        else{
+            
+            if( data.length==0){
+                res.status(200).render('search.html',{err:"No car found"});
+            }
+            else{
+                res.status(200).render('search.html',{ data:data});
+            }
+        }
+    })
+
+});
+
 
 app.get("/api",(req,res)=>{
     var data=["sun","mon","tues","wed","thurs","fri","sat"];
@@ -157,7 +201,6 @@ app.use('/product',product);
 
 
 
-require('./mdb');
 
 
 
