@@ -9,3 +9,4 @@ nav a:hover{ background-color: #333; color: #fff;}
 main{  background:#fff; margin-bottom: 10px; padding: 10px;}
 footer{ background:#fff; margin-bottom: 10px; padding: 10px; }
 .table, .table th, .table td{ border: 1px solid #666; }
+.loader{ position: absolute; width: 100px; left: 50%; top: 130px; transform: translate(-50%); display: none; }

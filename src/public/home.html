@@ -52,6 +52,12 @@
             <button type="submit">Search</button>
         </form>
 
+        <p>total cars: {{data.length}} </p>
+        <ol>
+            {% for i in data %}
+            <li>{{i.name}}</li>
+            {% endfor %}
+        </ol>
         </main>
         {% include "footer.html" %}
     </div>

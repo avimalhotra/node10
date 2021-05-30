@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node JS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        {% include "header.html" %}
+    
+        {% include "nav.html" %}
+        <main>
+            <h2> Search Pincode</h2>
+            <img src="img/loader.svg" alt="" class="loader">
+            <form action="/searchpin" method="GET">
+                <label>Pincode: <input type="search" name="pincode" required autofocus pattern="^[0-9]{6}$" ></label>
+                <button type="submit">Search</button>
+            </form>
+            <p class="output"></p>
+            <table class="table">
+
+            </table>
+        </main>
+        {% include "footer.html" %}
+        
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+$(function(){
+    $("main form").submit(function(e){
+        $(".loader").show();
+        $(".table").html('');
+        $("p.output").html('');
+
+        e.preventDefault();
+        var pin=$('main form input[name="pincode"]').val();
+        $.ajax({
+            url: "/searchpin",
+            data: {
+                pincode:pin 
+            },
+            success: function( result ) {
+                
+                if( typeof result=="string" ){ 
+                    $("p.output").text("No pincode found")
+                }
+                else{
+                
+                $(".table").append('<tr><th>Pincode</th><th>Office Name</th><th> Taluk</th><th>District</th></tr>');
+
+                result.forEach(function(i){
+                    $(".table").append('<tr><td>'+ i.pincode +'</td><td>'+ i.officeName+'</td><td>'+ i.taluk+'</td><td>'+ i.districtName+'</td></tr>')
+                });
+                }
+
+                $(".loader").hide();
+
+            }
+            });
+                });
+})
+</script>    
+</body>
+</html>        

@@ -9,8 +9,7 @@ const path=require('path');
 const { title } = require('process');
 
 const db=require('./dao');
-const [Car]=[require('./models/cars')];
-
+const [Car,Pin]=[require('./models/cars'),require('./models/pin')];
 
 const [admin,user,product]=[require('./routes/admin'), require('./routes/user'),require('./routes/product')];
 
@@ -66,7 +65,42 @@ app.get("/",(req,res)=>{
         //req.session.username="avi";    
        
     //res.send('Id :'+ req.sessionID+' Session Views :  '+ req.session.views['/'] + ' times');
-    res.render('home.html',{name:"Homepage", data:{version:'3.2.3',licence:'mozilla' },});
+
+    Car.find({},(err,data)=>{
+        if(err){
+          res.status(200).send(`Error Found: ${err}`);
+        }
+        else if(data.length==0){
+          //res.status(200).send("No pincode found");
+          res.render('home.html',{name:"Homepage", data:err});
+        }
+        else{
+          //res.status(200).send(data);
+          res.render('home.html',{name:"Homepage", data:data});
+        }
+ 
+    });
+    
+});
+
+app.get('/pincode',(req,res)=>{
+    res.status(200).render('pincode.html');
+});
+app.get('/searchpin',(req,res)=>{
+    let pin=req.query.pincode;
+
+   Pin.find({pincode:pin},(err,data)=>{
+       if(err){
+        return res.status(200).send(`Error Found: ${err}`);
+       }
+       else if(data.length==0){
+        return res.status(200).send("No pincode found");
+       }
+       else{
+        return res.status(200).send(data);
+       }
+
+   });
 });
 
 app.post('/search',(req,res)=>{
@@ -198,10 +232,6 @@ app.post("/contact",(req,res)=>{
 app.use('/admin',admin);
 app.use('/user',user);
 app.use('/product',product);
-
-
-
-
 
 
 
