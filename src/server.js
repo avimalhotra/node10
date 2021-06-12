@@ -9,15 +9,56 @@ const path=require('path');
 const { title } = require('process');
 
 const db=require('./dao');
-const [Car,Pin]=[require('./models/cars'),require('./models/pin')];
+const [Car,Pin,User]=[require('./models/cars'),require('./models/pin'),require('./models/user')];
 
 const [admin,user,product]=[require('./routes/admin'), require('./routes/user'),require('./routes/product')];
+
+const passport=require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
+
 
 const app=express();
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: false })); 
 app.use(cookieParser());
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+  });
+passport.deserializeUser(function (user, next) {
+    next(null, user);
+});
+
+passport.use( new LocalStrategy({ usernameField: 'name',passwordField:'userpass' },(username, password, done) => {  
+    
+    User.findOne({ name: username }, (err, user) => {
+      
+      if (err) { return done(err); }
+      if (!user) { return done(null, null, { message: 'No user found!' }); }
+      if (user.password!==password) {
+       
+        return done(null, null, { message: 'Username or password is incorrect!' });
+      }
+  
+      return done(null, user, null);
+    });
+  }
+));
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      next();
+    } else {
+      res.status(403).send('Forbidden');
+    }
+  }
+
+app.get('/adminlogin', isAuthenticated, (req, res) => { res.render('login.html') });
+
 
 //nunjucks.configure('views', { autoescape: true });
 nunjucks.configure(path.resolve(__dirname,'public'),{
@@ -58,14 +99,41 @@ app.use( (req, res, next)=> {
     next()
   });
 
+  app.post("/adminlogin",(req,res)=>{
+        
+
+        passport.authenticate('local', function (err, user, info) {
+
+            if (err) {
+              res.render('admin.html', { error: err });
+            } else if (!user) {
+               
+              res.render('admin.html', { errorMessage: info.message });
+        
+            } else {
+              //setting users in session
+              req.logIn(user, function (err) {
+                if (err) {
+                   
+                  res.render('admin.html', { error: err });
+                } else {
+                  res.render('login.html',{ name:user.name});
+                }
+              })
+            }
+          })(req, res);
+
+  });
+
+  app.get('/signout',(req,res)=>{
+    req.logout();
+    res.redirect('/');
+  })
+
+
 app.get("/",(req,res)=>{
     res.setHeader("Content-Type","text/html");
-    //res.status(200).send( req.cookies);
-    //res.status(200).send( req.sessionID);
-        //req.session.username="avi";    
-       
-    //res.send('Id :'+ req.sessionID+' Session Views :  '+ req.session.views['/'] + ' times');
-
+ 
     Car.find({},(err,data)=>{
         if(err){
           res.status(200).send(`Error Found: ${err}`);

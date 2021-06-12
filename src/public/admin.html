@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Node JS</title>
+    <title>Admin </title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,6 +14,21 @@
         {% include "nav.html" %}
         <main>
             <h2> Hello {{name}}</h2>
+
+            <form action="/adminlogin" method="POST">
+                <div class="form-control">
+                    <label>Name: <input type="text" name="name" required autofocus></label>
+                    
+                </div>
+                <div class="form-control">
+                    <label>Password: <input type="password" name="userpass" required></label>
+                    
+                </div>
+                <div class="form-control">
+                    <button class="btn">Submit</button> <span>{{err}}</span> <span>{{errorMessage}}</span>
+                </div>
+            </form>
+
         </main>
         {% include "footer.html" %}
         

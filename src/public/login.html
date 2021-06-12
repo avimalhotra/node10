@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin </title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        {% include "header.html" %}
+    
+        {% include "nav.html" %}
+        <main>
+            <a class="pull-right" href="/signout">Signout</a>
+            <h2> Hello Admin {{name}}</h2>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam, expedita nobis illum deserunt molestias rerum commodi dolorum aspernatur corporis magni porro? Enim libero assumenda iste nostrum ratione sunt dolore maiores.</p>
+            
+            
+
+        </main>
+        {% include "footer.html" %}
+        
+    </div>
+</body>
+</html>        
